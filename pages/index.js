@@ -28,7 +28,7 @@ export default function Home() {
             [targetImage]: e.target.result,
           }
         })
-        console.log(selectedImages)
+        console.log()
         setIsUploaded(true)
       }
 
@@ -193,14 +193,17 @@ export default function Home() {
                     alt="CloseIcon"
                     onClick={() => {
                       setIsUploaded(false)
-                      setSelectedImages(null)
+                      setSelectedImages((prevImages) => ({
+                        ...prevImages,
+                        image1: "",
+                      }))
                     }}
                     width={30}
                     height={30}
                   />
                   <Image
                     id="uploaded-image"
-                    src={selectedImages}
+                    src={selectedImages.image1}
                     draggable={false}
                     alt="uploaded-img"
                     width={250}
@@ -210,8 +213,6 @@ export default function Home() {
                 </div>
               )}
             </div>
-
-            {isUploaded ? <h2>Type is {typeFile}</h2> : null}
           </div>
         )}
       </div>
