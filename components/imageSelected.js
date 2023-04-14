@@ -1,7 +1,11 @@
+import {useAppContext} from "../context/context"
+
 import React from "react"
 
-const selectImage = () => {
+const SelectImage = () => {
+  const {selectedImage, setSelectedImage} = useAppContext()
+
   return <div>imageSelected</div>
 }
 
-export default selectImage
+export default SelectImage

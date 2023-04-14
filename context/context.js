@@ -4,13 +4,10 @@ import {createContext, useContext} from "react"
 export const appContext = createContext(null)
 
 export default function Context({children}) {
-  const [selectedImages, setSelectedImages] = useState({
-    image1: "",
-    image2: "",
-  })
+  const [selectedImage, setSelectedImage] = useState("")
 
   return (
-    <appContext.Provider value={{selectedImages, setSelectedImages}}>
+    <appContext.Provider value={{selectedImage, setSelectedImage}}>
       {children}
     </appContext.Provider>
   )
