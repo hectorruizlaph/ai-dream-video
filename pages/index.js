@@ -2,6 +2,7 @@ import {useState} from "react"
 import Head from "next/head"
 import Image from "next/image"
 import {useAppContext} from "../context/context"
+import Video from "../components/video"
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
@@ -229,6 +230,7 @@ export default function Home() {
           Go!
         </button>
       </form>
+      <Video />
     </div>
   )
 }
