@@ -1,15 +1,14 @@
 import {useState, useContext} from "react"
 import axios from "axios"
-import {ImageContext} from "../contexts/ImageContext" // import your context
+import {useAppContext} from "../context/context"
 
-export default function VideoComponent() {
+export default function Video() {
   const [loading, setLoading] = useState(false)
   const [animationPrompts, setAnimationPrompts] = useState("")
   const [videoId, setVideoId] = useState(null)
   const [videoUrl, setVideoUrl] = useState(null)
 
-  // get the selectedImage from the ImageContext
-  const {selectedImage} = useContext(ImageContext)
+  const {selectedImage, setSelectedImage} = useAppContext()
 
   const handleAnimation = async () => {
     setLoading(true)
