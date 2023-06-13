@@ -1,19 +1,21 @@
-// components/video.js
 import {useState, useEffect} from "react"
 import axios from "axios"
 
 const Video = () => {
   const [videoURL, setVideoURL] = useState("")
   const [loading, setLoading] = useState(false)
+  const [animationPrompts, setAnimationPrompts] = useState(
+    "Initial animation prompt"
+  )
 
-  const handleRun = async (animation_prompts, event) => {
+  const handleRun = async (event) => {
     if (event) event.preventDefault()
 
     setLoading(true)
 
     try {
       const response = await axios.post("/api/video", {
-        prompts: animation_prompts,
+        prompts: animationPrompts,
       })
 
       const {data} = response
@@ -27,11 +29,17 @@ const Video = () => {
   }
 
   useEffect(() => {
-    handleRun("Initial animation prompt")
+    handleRun()
   }, [])
 
   return (
     <div>
+      <input
+        type="text"
+        value={animationPrompts}
+        onChange={(e) => setAnimationPrompts(e.target.value)}
+        placeholder="Enter animation prompts"
+      />
       <button onClick={handleRun} disabled={loading}>
         {loading ? "Loading..." : "Load Video"}
       </button>
