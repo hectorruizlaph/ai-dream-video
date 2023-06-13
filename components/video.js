@@ -1,11 +1,10 @@
-import {useState, useContext} from "react"
+import {useState} from "react"
 import axios from "axios"
 import {useAppContext} from "../context/context"
 
 export default function Video() {
   const [loading, setLoading] = useState(false)
   const [animationPrompts, setAnimationPrompts] = useState("")
-  const [videoId, setVideoId] = useState(null)
   const [videoUrl, setVideoUrl] = useState(null)
 
   const {selectedImage, setSelectedImage} = useAppContext()
@@ -19,9 +18,9 @@ export default function Video() {
         initImage: selectedImage,
       })
 
-      setVideoId(response.data.id)
+      const videoId = response.data.id
       // After videoId is set, fetch the result video url
-      await fetchResultVideo(response.data.id)
+      await fetchResultVideo(videoId)
     } catch (error) {
       console.error("Failed to start animation:", error)
     }

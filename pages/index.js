@@ -110,13 +110,13 @@ export default function Home() {
         Select your base photo
       </h1>
       <h1 className="py-4 text-center font-bold text-2xl">
-        Upload an image or Dream one
+        {/* Upload an image or  */}
+        Dream an image
       </h1>
       {error && <div>{error}</div>}
-      <div className="max-w-2xl pt-2">
+      {/* <div className="max-w-2xl pt-2">
         {
           <div>
-            {/* <DragDropFiles /> */}
             <div className="flex justify-center align-middle">
               {!isUploaded ? (
                 <div className="flex flex-col justify-center align-middle p-4 bg-slate-200 rounded-md border-2 border-slate-400 border-dashed hover:cursor-pointer hover:bg-slate-300">
@@ -172,59 +172,31 @@ export default function Home() {
       </div>
       <div>
         <p className="font-semibold text-center py-2">Or</p>
-      </div>
+      </div> */}
       <div className="max-w-[512px] pt-2 mx-auto">
         {prediction ? (
           <div className="grid grid-cols-2 gap-2">
             {prediction.output ? (
               <>
-                <div
-                  className="mx-auto"
-                  onClick={() =>
-                    handleImageSelect(
-                      prediction.output[prediction.output.length - 1]
-                    )
-                  }
-                >
-                  <Image
-                    src={prediction.output[prediction.output.length - 1]}
-                    alt="output"
-                    width={250}
-                    height={250}
-                    className="cursor-pointer rounded-sm hover:ring-4 hover:ring-teal-500 border-4 border-transparent transition-all"
-                  />
-                </div>
-                {/* display 4 images */}
-                <div className="mx-auto">
-                  <Image
-                    // src="/images/out-1.png"
-                    src={prediction.output[prediction.output.length - 2]}
-                    alt="output"
-                    width={250}
-                    height={250}
-                    className="cursor-pointer rounded-sm hover:ring-4 hover:ring-teal-500"
-                  />
-                </div>
-                <div className="mx-auto">
-                  <Image
-                    src={prediction.output[prediction.output.length - 3]}
-                    // src="/images/out-2.png"
-                    alt="output"
-                    width={250}
-                    height={250}
-                    className="cursor-pointer rounded-sm hover:ring-4 hover:ring-teal-500"
-                  />
-                </div>
-                <div className="mx-auto">
-                  <Image
-                    src={prediction.output[prediction.output.length - 4]}
-                    // src="/images/out-3.png"
-                    alt="output"
-                    width={250}
-                    height={250}
-                    className="cursor-pointer rounded-sm hover:ring-4 hover:ring-teal-500"
-                  />
-                </div>
+                {prediction.output.map((imageUrl, index) => (
+                  <div
+                    key={index}
+                    className={`mx-auto ${
+                      selectedImage === imageUrl
+                        ? "border-4 border-teal-500"
+                        : ""
+                    }`}
+                    onClick={() => handleImageSelect(imageUrl)}
+                  >
+                    <Image
+                      src={imageUrl}
+                      alt="output"
+                      width={250}
+                      height={250}
+                      className="cursor-pointer rounded-sm hover:ring-4 hover:ring-teal-500 transition-all"
+                    />
+                  </div>
+                ))}
               </>
             ) : null}
           </div>

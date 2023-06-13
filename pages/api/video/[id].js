@@ -1,3 +1,5 @@
+// pages/api/video/[id].js:
+
 import prisma from "../../../utils/prisma"
 
 export default async function handler(req, res) {
@@ -12,8 +14,8 @@ export default async function handler(req, res) {
       return res.status(404).json({error: "Video not found"})
     }
 
-    // Return the video object or extract necessary data
-    res.status(200).json(video)
+    // Assuming the video object has a `videoUrl` property
+    res.status(200).json({videoUrl: video.videoUrl})
   } catch (error) {
     console.error(error)
     res.status(500).json({error: "Internal server error"})

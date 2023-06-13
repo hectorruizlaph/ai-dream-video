@@ -1,15 +1,14 @@
 import axios from "axios"
 
-const runVideo = async (req, res) => {
+export default async function handler(req, res) {
   if (req.method === "POST") {
     try {
-      const animationPrompts = req.body.animationPrompts
-      const initImage = req.body.initImage
+      const {animationPrompts, initImage} = req.body
 
       const response = await axios.post(
         "https://api.runpod.ai/v2/r19wiv95jb17vv/run",
         {
-          webhook: process.env.NEXT_PUBLIC_URL + "/api/webhook",
+          webhook: `${process.env.NEXT_PUBLIC_URL}/api/webhook`,
           s3Config: {
             bucketName: process.env.S3_BUCKET_NAME,
             accessId: process.env.S3_ACCESS_ID,
@@ -37,6 +36,7 @@ const runVideo = async (req, res) => {
 
       res.status(200).json(response.data)
     } catch (error) {
+      console.error(error)
       res.status(500).json({error: "Error running video generation."})
     }
   } else {
@@ -45,5 +45,3 @@ const runVideo = async (req, res) => {
     res.status(405).end(`Method ${req.method} Not Allowed`)
   }
 }
-
-export default runVideo
