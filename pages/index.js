@@ -29,6 +29,11 @@ export default function Home() {
     }
   }
 
+  const handleImageSelect = (imageUrl) => {
+    console.log("selected image:", imageUrl)
+    setSelectedImage(imageUrl)
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -173,14 +178,20 @@ export default function Home() {
           <div className="grid grid-cols-2 gap-2">
             {prediction.output ? (
               <>
-                <div className="mx-auto">
+                <div
+                  className="mx-auto"
+                  onClick={() =>
+                    handleImageSelect(
+                      prediction.output[prediction.output.length - 1]
+                    )
+                  }
+                >
                   <Image
                     src={prediction.output[prediction.output.length - 1]}
-                    // src="/images/out-0.png"
                     alt="output"
                     width={250}
                     height={250}
-                    className="cursor-pointer rounded-sm hover:ring-4 hover:ring-teal-500"
+                    className="cursor-pointer rounded-sm hover:ring-4 hover:ring-teal-500 border-4 border-transparent transition-all"
                   />
                 </div>
                 {/* display 4 images */}
