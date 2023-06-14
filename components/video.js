@@ -1,3 +1,5 @@
+// components/video.js
+
 import {useState} from "react"
 import axios from "axios"
 import {useAppContext} from "../context/context"
@@ -7,7 +9,7 @@ export default function Video() {
   const [animationPrompts, setAnimationPrompts] = useState("")
   const [videoUrl, setVideoUrl] = useState(null)
 
-  const {selectedImage, setSelectedImage} = useAppContext()
+  const {selectedImage} = useAppContext()
 
   const handleAnimation = async () => {
     setLoading(true)
@@ -18,7 +20,8 @@ export default function Video() {
         initImage: selectedImage,
       })
 
-      const videoId = response.data.id
+      console.log("response.data.id:", response.data.videoId)
+      const videoId = response.data.videoId
       // After videoId is set, fetch the result video url
       await fetchResultVideo(videoId)
     } catch (error) {
@@ -26,17 +29,6 @@ export default function Video() {
     }
 
     setLoading(false)
-  }
-
-  const fetchResultVideo = async (videoId) => {
-    try {
-      const response = await axios.get(`/api/video/${videoId}`)
-
-      // assuming the response contains a direct url to the video
-      setVideoUrl(response.data.videoUrl)
-    } catch (error) {
-      console.error("Failed to fetch result video:", error)
-    }
   }
 
   return (
