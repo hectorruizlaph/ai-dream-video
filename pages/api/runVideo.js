@@ -1,5 +1,5 @@
-import axios from "axios"
 import prisma from "../../utils/prisma"
+import axios from "axios"
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
@@ -7,9 +7,9 @@ export default async function handler(req, res) {
       const animationPrompts = req.body.animationPrompts
       const initImage = req.body.initImage
 
-      // Make the API call to run the video generation
+      // Make the API call to start the video generation process
       const response = await axios.post(
-        "https://api.runpod.ai/v2/bbjho7b2sbjsdr/run",
+        "https://api.runpod.ai/v2/r19wiv95jb17vv/run",
         {
           s3Config: {
             bucketName: process.env.S3_BUCKET_NAME,
@@ -19,12 +19,16 @@ export default async function handler(req, res) {
           },
           input: {
             model_checkpoint: "revAnimated_v122.ckpt",
-            animation_prompts: animationPrompts,
+            animation_prompts:
+              animationPrompts ||
+              "0: a beautiful apple, trending on Artstation | 25: a beautiful banana, trending on Artstation",
             max_frames: 50,
             num_inference_steps: 50,
             fps: 15,
             use_init: true,
-            init_image: initImage,
+            init_image:
+              initImage ||
+              "https://replicate.delivery/pbxt/XgwJVVHDIDJKKddxTa8teF5Qcgfwj4Ba7EUsqaQRNN1g5qFRA/out-0.png",
             animation_mode: "3D",
             zoom: "0:(1)",
             translation_x: "0:(0)",
@@ -33,7 +37,6 @@ export default async function handler(req, res) {
         },
         {
           headers: {
-            "Content-Type": "application/json",
             Authorization: process.env.RUNPOD_AUTHORIZATION,
           },
         }
@@ -56,8 +59,7 @@ export default async function handler(req, res) {
         const status = statusResponse.data.status
 
         if (status === "COMPLETED") {
-          const fileUrl = statusResponse.data.output.file_url
-          videoId = extractVideoIdFromUrl(fileUrl)
+          videoId = getVideoIdFromUrl(statusResponse.data.output.file_url)
         } else {
           // Wait for 4 seconds before checking the status again
           await sleep(4000)
@@ -70,24 +72,21 @@ export default async function handler(req, res) {
         data: {videoId},
       })
 
-      res.status(200).json(video)
+      res.status(200).json({success: true})
     } catch (error) {
       console.error("Failed to start animation:", error)
-      res.status(500).json({error: "Error running video generation."})
+      res.status(500).json({error: "Failed to start animation."})
     }
   } else {
-    // Handle any other HTTP method
-    res.setHeader("Allow", ["POST"])
-    res.status(405).end(`Method ${req.method} Not Allowed`)
+    res.status(405).json({error: "Method not allowed."})
   }
 }
 
-function extractVideoIdFromUrl(fileUrl) {
-  const parts = fileUrl.split("/")
-  const fileId = parts[parts.length - 1].split("?")[0]
-  return fileId
+const getVideoIdFromUrl = (videoUrl) => {
+  const parts = videoUrl.split("/")
+  return parts[parts.length - 1].split("?")[0]
 }
 
-function sleep(ms) {
+const sleep = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
