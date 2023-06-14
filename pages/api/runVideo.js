@@ -57,18 +57,19 @@ export default async function handler(req, res) {
         )
 
         const status = statusResponse.data.status
+        console.log("backend status:", status)
 
         if (status === "COMPLETED") {
           videoId = getVideoIdFromUrl(statusResponse.data.output.file_url)
         } else {
           // Wait for 4 seconds before checking the status again
-          await sleep(4000)
+          await sleep(30000)
         }
       }
 
       // Update the videoId field in the Video model
       await prisma.video.update({
-        where: {id: video.id},
+        where: {runpodId: video.id},
         data: {videoId},
       })
 

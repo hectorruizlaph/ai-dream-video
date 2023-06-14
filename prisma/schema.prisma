@@ -12,7 +12,8 @@ datasource db {
 
 model Video {
   id        Int      @id @default(autoincrement())
-  videoId   String?
-  runpodId  String
+  videoId   String?  @unique
+  videoURL  String?  @unique
+  runpodId  String   @unique
   createdAt DateTime @default(now())
 }

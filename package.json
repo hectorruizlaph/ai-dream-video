@@ -3,14 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "dotenv -e .env.local -- next dev",
+    "dev": "dotenv -e .env.local next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "studio": "dotenv -e .env.local -- npx prisma studio",
     "generate": "npx prisma generate",
-    "prisma:dev": "dotenv -e .env.local -- npx prisma migrate dev && npx prisma generate",
-    "vercel-build": "npx prisma migrate deploy && npx prisma generate && next build"
+    "prisma:dev": "dotenv -e .env.local -- npx prisma migrate dev && npx prisma generate && dotenv -e .env.local -- next dev",
+    "vercel-build": "prisma migrate deploy && prisma generate && next build"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.352.0",
@@ -25,10 +25,12 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-dropzone": "^14.2.3",
-    "replicate": "^0.6.0"
+    "replicate": "^0.6.0",
+    "swr": "^2.1.5"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.14",
+    "dotenv-cli": "^7.2.1",
     "postcss": "^8.4.21",
     "prisma": "^4.15.0",
     "tailwindcss": "^3.2.7"
