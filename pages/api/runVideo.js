@@ -9,7 +9,7 @@ export default async function handler(req, res) {
 
       // Make the API call to run the video generation
       const response = await axios.post(
-        "https://api.runpod.ai/v2/r19wiv95jb17vv/run",
+        "https://api.runpod.ai/v2/bbjho7b2sbjsdr/run",
         {
           s3Config: {
             bucketName: process.env.S3_BUCKET_NAME,
@@ -19,16 +19,12 @@ export default async function handler(req, res) {
           },
           input: {
             model_checkpoint: "revAnimated_v122.ckpt",
-            animation_prompts:
-              animationPrompts ||
-              "0: a beautiful apple, trending on Artstation | 25: a beautiful banana, trending on Artstation",
+            animation_prompts: animationPrompts,
             max_frames: 50,
             num_inference_steps: 50,
             fps: 15,
             use_init: true,
-            init_image:
-              initImage ||
-              "https://replicate.delivery/pbxt/XgwJVVHDIDJKKddxTa8teF5Qcgfwj4Ba7EUsqaQRNN1g5qFRA/out-0.png",
+            init_image: initImage,
             animation_mode: "3D",
             zoom: "0:(1)",
             translation_x: "0:(0)",
@@ -43,14 +39,35 @@ export default async function handler(req, res) {
         }
       )
 
-      // Extract the video ID from the response
-      const videoId = response.data.id
-
-      // Save the videoId to the Video model using Prisma
+      // Save the runpodId to the Video model using Prisma
       const video = await prisma.video.create({
         data: {
-          videoId: videoId,
+          runpodId: response.data.id,
         },
+      })
+
+      let videoId = null
+
+      while (!videoId) {
+        const statusResponse = await axios.get(
+          `https://api.runpod.ai/v2/r19wiv95jb17vv/status/${video.runpodId}`
+        )
+
+        const status = statusResponse.data.status
+
+        if (status === "COMPLETED") {
+          const fileUrl = statusResponse.data.output.file_url
+          videoId = extractVideoIdFromUrl(fileUrl)
+        } else {
+          // Wait for 4 seconds before checking the status again
+          await sleep(4000)
+        }
+      }
+
+      // Update the videoId field in the Video model
+      await prisma.video.update({
+        where: {id: video.id},
+        data: {videoId},
       })
 
       res.status(200).json(video)
@@ -63,4 +80,14 @@ export default async function handler(req, res) {
     res.setHeader("Allow", ["POST"])
     res.status(405).end(`Method ${req.method} Not Allowed`)
   }
+}
+
+function extractVideoIdFromUrl(fileUrl) {
+  const parts = fileUrl.split("/")
+  const fileId = parts[parts.length - 1].split("?")[0]
+  return fileId
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
