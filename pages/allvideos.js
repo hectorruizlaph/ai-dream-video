@@ -29,7 +29,7 @@ export default function AllVideos() {
   }, [])
 
   const getFinalVideoId = async (videoUrl) => {
-    const statusUrl = `https://api.runpod.ai/v2/bbjho7b2sbjsdr/status/${getVideoIdFromUrl(
+    const statusUrl = `https://api.runpod.ai/v2/r19wiv95jb17vv/status/${getVideoIdFromUrl(
       videoUrl
     )}`
 
@@ -37,10 +37,15 @@ export default function AllVideos() {
 
     while (!videoId) {
       const response = await axios.get(statusUrl)
-      videoId = response.data.videoId
+      const status = response.data.status
 
-      // Wait for 4 seconds before checking the status again
-      await sleep(4000)
+      if (status === "COMPLETED") {
+        const fileUrl = response.data.output.file_url
+        videoId = getVideoIdFromUrl(fileUrl)
+      } else {
+        // Wait for 4 seconds before checking the status again
+        await sleep(4000)
+      }
     }
 
     return videoId
