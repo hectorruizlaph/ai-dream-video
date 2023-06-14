@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "dotenv -e .env.local next dev",
+    "dev": "dotenv -e .env.local -- next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "studio": "dotenv -e .env.local -- npx prisma studio",
-    "generate": "prisma generate",
-    "prisma:migrate:dev": "dotenv -e .env.local prisma migrate dev",
+    "generate": "npx prisma generate",
+    "prisma:dev": "dotenv -e .env.local -- npx prisma migrate dev && npx prisma generate",
     "vercel-build": "prisma generate && prisma migrate deploy && next build"
   },
   "dependencies": {
