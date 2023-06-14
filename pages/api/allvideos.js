@@ -26,7 +26,7 @@ export default async function handler(req, res) {
         // Remove everything after "?" in the signed URL
         const cleanUrl = signedUrl.split("?")[0]
 
-        return {url: cleanUrl, runpodId: video.runpodId, videoId: video.videoId}
+        return cleanUrl
       })
     )
 
