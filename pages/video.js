@@ -17,7 +17,7 @@ export default function VideoPage() {
   const [error, setError] = useState(null)
 
   const {data, error: statusError} = useSWR(
-    runpodId ? `/api/status/${runpodId}` : null,
+    runpodId ? `${process.env.NEXT_PUBLIC_URL}/api/status/${runpodId}` : null,
     fetcher,
     {
       refreshInterval: 5000, // Fetch status every 5 seconds
@@ -26,7 +26,7 @@ export default function VideoPage() {
 
   const createVideo = async () => {
     try {
-      const res = await axios.post("/api/video2", {animationPrompts, initImage})
+      const res = await axios.post("/api/video", {animationPrompts, initImage})
       setRunpodId(res.data.runpodId)
     } catch (error) {
       setError(error.message)

@@ -9,7 +9,7 @@ export default function VideoPage({videoURL}) {
     return <div>Loading...</div>
   }
 
-  console.log("Video URL: ", videoURL)
+  //   console.log("Video URL: ", videoURL)
 
   return (
     <div>
