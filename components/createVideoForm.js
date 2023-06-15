@@ -45,17 +45,17 @@ export default function CreateVideoForm() {
         <div className="mb-4">
           <label className="block text-gray-700">
             Animation Prompts:
-            <input
+            <textarea
               type="text"
               value={animationPrompts}
               onChange={(e) => setAnimationPrompts(e.target.value)}
-              className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full mt-2 block px-4 py-2 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-gray-500 focus:border-gray-500"
             />
           </label>
         </div>
         <button
           type="submit"
-          className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm bg-black text-white bg- hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
         >
           Submit
         </button>
