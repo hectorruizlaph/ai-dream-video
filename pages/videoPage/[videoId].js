@@ -45,5 +45,11 @@ export async function getStaticProps({params}) {
     },
   })
 
+  if (!video) {
+    return {
+      notFound: true,
+    }
+  }
+
   return {props: {videoURL: video.videoURL}}
 }
