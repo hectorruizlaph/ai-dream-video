@@ -10,7 +10,7 @@ import {ImageUpload} from "../components/imageUpload"
 // import {Demo} from "../components/demo"
 // import {ReactCroper} from "../components/reactCroper"
 import ImageUploadAndCrop from "../components/ImageUploadAndCrop"
-import {Stepper, Button, Group} from "@mantine/core"
+import {Stepper, Button, Group, Tooltip} from "@mantine/core"
 import {Clock, Photo, Palette, CircleCheck} from "tabler-icons-react"
 
 // import Step1Options from "../components/step1/options"
@@ -49,19 +49,6 @@ const Home = () => {
     (step !== 1 || (step === 1 && selectedImage))
 
   const {selectedImage, setSelectedImage} = useAppContext()
-
-  function handleImageChange(e) {
-    if (e.target.files && e.target.files[0]) {
-      let reader = new FileReader()
-
-      reader.onload = function (e) {
-        setImage(e.target.result)
-        setIsUploaded(true)
-      }
-
-      reader.readAsDataURL(e.target.files[0])
-    }
-  }
 
   const handleImageSelect = (imageUrl) => {
     console.log("selected image:", imageUrl)
@@ -136,7 +123,7 @@ const Home = () => {
           onChange={(e) => setReplicateKey(e.target.value)}
         />
       </div>
-      <p>
+      <p className="pb-8">
         If you don&apos;t have one: go to{" "}
         <a
           href="https://replicate.com"
@@ -209,7 +196,7 @@ const Home = () => {
                 placeholder="Enter a prompt to display an image"
               />
               <button className="button" type="submit">
-                Go!
+                Generate Image
               </button>
             </form>
           </Stepper.Step>
@@ -237,16 +224,28 @@ const Home = () => {
         </Stepper>
 
         <Group position="center" mt="xl">
-          <Button variant="default" onClick={prevStep}>
-            Back
-          </Button>
           <Button
             variant="default"
-            onClick={nextStep}
-            disabled={selectedImage ? false : true}
+            onClick={prevStep}
+            className={active === 0 ? "hidden" : "block"}
           >
-            Next step
+            Back
           </Button>
+          <Tooltip label="Select your base image" position="bottom" withArrow>
+            <div>
+              <Button
+                variant="default"
+                onClick={nextStep}
+                disabled={selectedImage ? false : true}
+              >
+                {active === 0
+                  ? "Use Image & Create Prompts"
+                  : active === 1
+                  ? "Create Video"
+                  : "Next"}
+              </Button>
+            </div>
+          </Tooltip>
         </Group>
       </>
     </div>

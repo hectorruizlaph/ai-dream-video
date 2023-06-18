@@ -9,7 +9,7 @@ export default async function handler(req, res) {
 
   const replicateKey = req.body.replicateKey
   const replicate = new Replicate({
-    auth: replicateKey,
+    auth: replicateKey || process.env.REPLICATE_API_TOKEN,
   })
   if (!process.env.REPLICATE_API_TOKEN) {
     throw new Error(
