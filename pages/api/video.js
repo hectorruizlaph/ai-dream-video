@@ -34,7 +34,8 @@ export default async function handler(req, res) {
           translation_x: "0:(0)",
           translation_y: "0:(0)",
           translation_z: "0:(0)",
-          strength_schedule: "0: (0.9), 25: (0.65), 50: (0.65), 75: (0.65)",
+          // strength_schedule: "0: (0.9), 25: (0.65), 50: (0.65), 75: (0.65)",
+          strength_schedule: "0: (0.9)",
           guidance_scale: 7,
           width: 512,
           height: 512,
@@ -54,9 +55,9 @@ export default async function handler(req, res) {
           perspective_flip_fv: "0:(0)",
         },
         s3Config: {
-          bucketName: process.env.S3_BUCKET_NAME,
-          accessId: process.env.S3_ACCESS_ID,
-          accessSecret: process.env.S3_ACCESS_SECRET,
+          bucketName: process.env.S3_UPLOAD_BUCKET,
+          accessId: process.env.S3_UPLOAD_KEY,
+          accessSecret: process.env.S3_UPLOAD_SECRET,
           endpointUrl: process.env.S3_ENDPOINT_URL,
         },
       },
@@ -115,7 +116,7 @@ export default async function handler(req, res) {
 
     // console.log(
     //   "videoURL:",
-    //   `${process.env.S3_ENDPOINT_URL}/${process.env.S3_BUCKET_NAME}/${videoId}.mp4`
+    //   `${process.env.S3_ENDPOINT_URL}/${process.env.S3_UPLOAD_BUCKET}/${videoId}.mp4`
     // )
 
     res.status(200).json({
@@ -124,7 +125,7 @@ export default async function handler(req, res) {
         runpodId: statusResponse.data.id,
         status: statusResponse.data.status,
         videoId: String(videoId),
-        videoURL: `${process.env.S3_ENDPOINT_URL}/${process.env.S3_BUCKET_NAME}/${videoId}.mp4`,
+        videoURL: `${process.env.S3_ENDPOINT_URL}/${process.env.S3_UPLOAD_BUCKET}/${videoId}.mp4`,
       },
     })
   } catch (error) {

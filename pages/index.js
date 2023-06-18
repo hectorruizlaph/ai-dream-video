@@ -2,18 +2,33 @@ import {useState} from "react"
 import Head from "next/head"
 import Image from "next/image"
 import {useAppContext} from "../context/context"
-import Video from "../components/video"
 import CreateVideoForm from "../components/createVideoForm"
+// import {ImageUpload} from "../components/imageUpload"
+// import ImageUpload from "../components/imageUpload2"
+// import Uploader from "../components/uploader3"
+// import Uploader4 from "../components/uploader4"
+// import {Demo} from "../components/demo"
+// import {ReactCroper} from "../components/reactCroper"
+import ImageUploadAndCrop from "../components/ImageUploadAndCrop"
+import {Stepper, Button, Group} from "@mantine/core"
+import {Clock, Photo, Palette, CircleCheck} from "tabler-icons-react"
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
-export default function Home() {
+const Home = () => {
   const [image, setImage] = useState("")
   const [isUploaded, setIsUploaded] = useState(false)
 
   const [prediction, setPrediction] = useState(null)
   const [error, setError] = useState(null)
   const [replicateKey, setReplicateKey] = useState("")
+
+  // Stepper
+  const [active, setActive] = useState(1)
+  const nextStep = () =>
+    setActive((current) => (current < 3 ? current + 1 : current))
+  const prevStep = () =>
+    setActive((current) => (current > 0 ? current - 1 : current))
 
   const {selectedImage, setSelectedImage} = useAppContext()
 
@@ -107,6 +122,50 @@ export default function Home() {
         , create an account, then go to &quot;Account&quot; and copy your API
         token
       </p>
+      <>
+        <Stepper
+          active={active}
+          onStepClick={setActive}
+          completedIcon={<CircleCheck />}
+        >
+          <Stepper.Step
+            icon={<Photo size="1.1rem" />}
+            label="Base Image"
+            description="Select your base image"
+            color="black"
+          >
+            Step 1 content: Create an account
+          </Stepper.Step>
+          <Stepper.Step
+            icon={<Palette size="1.1rem" />}
+            label="Create"
+            description="Generate your prompts"
+            color="black"
+          >
+            Step 2 content: Verify email
+          </Stepper.Step>
+          <Stepper.Step
+            icon={<Clock size="1.1rem" />}
+            label="Wait"
+            description="Wait for the AI"
+            color="black"
+          >
+            Step 3 content: Get full access
+          </Stepper.Step>
+          <Stepper.Completed>
+            Completed, click back button to get to previous step
+          </Stepper.Completed>
+        </Stepper>
+
+        <Group position="center" mt="xl">
+          <Button variant="default" onClick={prevStep}>
+            Back
+          </Button>
+          <Button variant="default" onClick={nextStep}>
+            Next step
+          </Button>
+        </Group>
+      </>
       <h1 className="py-2 text-center font-bold text-3xl pt-4">
         Select your base photo
       </h1>
@@ -115,65 +174,12 @@ export default function Home() {
         Dream an image
       </h1>
       {error && <div>{error}</div>}
-      {/* <div className="max-w-2xl pt-2">
-        {
-          <div>
-            <div className="flex justify-center align-middle">
-              {!isUploaded ? (
-                <div className="flex flex-col justify-center align-middle p-4 bg-slate-200 rounded-md border-2 border-slate-400 border-dashed hover:cursor-pointer hover:bg-slate-300">
-                  <label
-                    htmlFor="upload-input"
-                    className="cursor-pointer mx-auto"
-                  >
-                    <Image
-                      src="/images/upload-image.png"
-                      draggable={"false"}
-                      alt="placeholder"
-                      width={100}
-                      height={100}
-                      className="mx-auto"
-                    />
-                    <p className="text-slate-700">Click to upload image</p>
-                  </label>
-                  <input
-                    className="hidden"
-                    id="upload-input"
-                    type="file"
-                    accept=".jpg,.jpeg,.png"
-                    onChange={handleImageChange}
-                  />
-                </div>
-              ) : (
-                <div className="flex">
-                  <Image
-                    className="z-50 absolute cursor-pointer hover:border-2 mx-auto rounded-lg bg-amber-400 ml-[235px] -mt-[15px]"
-                    src="/images/close.png"
-                    alt="CloseIcon"
-                    onClick={() => {
-                      setIsUploaded(false)
-                      setImage("")
-                    }}
-                    width={30}
-                    height={30}
-                  />
-                  <Image
-                    id="uploaded-image"
-                    src={image}
-                    draggable={false}
-                    alt="uploaded-img"
-                    width={250}
-                    height={250}
-                    className="cursor-pointer rounded-sm hover:ring-4 hover:ring-teal-500"
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-        }
+      <div className="max-w-2xl pt-2">
+        <ImageUploadAndCrop />
       </div>
       <div>
         <p className="font-semibold text-center py-2">Or</p>
-      </div> */}
+      </div>
       <div className="max-w-[512px] pt-2 mx-auto">
         {prediction ? (
           <div className="grid grid-cols-2 gap-2">
@@ -215,7 +221,8 @@ export default function Home() {
         </button>
       </form>
       <CreateVideoForm />
-      {/* <Video /> */}
     </div>
   )
 }
+
+export default Home
