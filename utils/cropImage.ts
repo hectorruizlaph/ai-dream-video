@@ -10,7 +10,7 @@ const blobToFile = (blob: Blob, name: string): File => {
 const getCroppedImg = async (
   imageSrc: string,
   croppedAreaPixels: Area
-): Promise<string> => {
+): Promise<File> => {
   const image = new Image()
   image.src = imageSrc
 
@@ -42,7 +42,7 @@ const getCroppedImg = async (
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
       if (blob) {
-        resolve(URL.createObjectURL(blobToFile(blob, "newFile.png")))
+        resolve(blobToFile(blob, "newFile.png"))
       } else {
         reject("Cropping failed: Canvas is empty or could not be encoded.")
       }

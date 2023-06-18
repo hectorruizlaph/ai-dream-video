@@ -115,7 +115,10 @@ const Home = () => {
   useEffect(() => {
     console.log(typeof selectedImage)
     console.log(selectedImage)
-  })
+    if (selectedImage) {
+      handleStepChange(active + 1)
+    }
+  }, [selectedImage])
 
   return (
     <div className="container max-w-2xl mx-auto p-5">
@@ -159,11 +162,7 @@ const Home = () => {
             allowStepSelect={shouldAllowSelectStep(0)}
           >
             <h1 className="py-2 text-center font-bold text-3xl pt-4">
-              Select your base photo
-            </h1>
-            <h1 className="py-4 text-center font-bold text-2xl">
-              {/* Upload an image or  */}
-              Dream an image
+              Choose your base image
             </h1>
             {error && <div>{error}</div>}
             <div className="max-w-2xl pt-2">

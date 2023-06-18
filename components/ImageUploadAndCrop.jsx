@@ -2,6 +2,7 @@ import React, {useState, useCallback} from "react"
 import Cropper from "react-easy-crop"
 import getCroppedImg from "../utils/cropImage"
 import {useAppContext} from "../context/context"
+import Image from "next/image"
 
 const ImageUploadAndCrop = () => {
   const [imageSrc, setImageSrc] = useState(null)
@@ -36,11 +37,10 @@ const ImageUploadAndCrop = () => {
 
   const generateCroppedImage = async () => {
     const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels)
-    setCroppedImageSrc(croppedImage)
 
     // Use filename and content type of your cropped image
-    const filename = "croppedImage.jpg"
-    const contentType = "image/jpeg"
+    const filename = croppedImage.name // should be 'newFile.png'
+    const contentType = croppedImage.type // should be 'image/png'
 
     try {
       // Request a pre-signed URL from the postPhoto API
@@ -77,35 +77,57 @@ const ImageUploadAndCrop = () => {
 
   return (
     <div className="flex flex-col items-center space-y-4">
-      <input
-        type="file"
-        accept="image/*"
-        onChange={onFileChange}
-        className="mt-4"
-      />
-      {imageSrc && displayCrop ? (
-        <div className="flex flex-col space-y-2 justify-center align-middle">
-          <div className="relative w-[300px] h-[300px] sm:w-[500px] sm:h-[500px]">
-            <Cropper
-              image={imageSrc}
-              crop={crop}
-              // zoom={zoom}
-              aspect={1}
-              onCropChange={setCrop}
-              onCropComplete={onCropComplete}
-              // onZoomChange={setZoom}
+      {
+        <>
+          <div className="flex flex-col justify-center align-middle p-4 bg-slate-200 rounded-md border-2 border-slate-400 border-dashed hover:cursor-pointer hover:bg-slate-300">
+            <label htmlFor="upload-input" className="cursor-pointer mx-auto">
+              <Image
+                src="/images/upload-image.png"
+                draggable={"false"}
+                alt="placeholder"
+                width={100}
+                height={100}
+                className="mx-auto"
+              />
+              <p className="text-slate-700">Click to upload image</p>
+            </label>
+            <input
+              className="hidden"
+              id="upload-input"
+              type="file"
+              accept="image/*"
+              onChange={onFileChange}
             />
           </div>
-          <button
-            onClick={generateCroppedImage}
-            disabled={!imageSrc}
-            className="p-4 bg-black text-white font-semibold rounded-md"
-          >
-            Crop & Use
-          </button>
-        </div>
-      ) : null}
-      {croppedImageSrc && <img src={croppedImageSrc} alt="Cropped" />}
+          {/* <input
+            type="file"
+            accept="image/*"
+            onChange={onFileChange}
+            className="mt-4"
+          /> */}
+          {imageSrc && !selectedImage && (
+            <div className="flex flex-col space-y-2 justify-center align-middle">
+              <div className="relative w-[300px] h-[300px] sm:w-[500px] sm:h-[500px]">
+                <Cropper
+                  image={imageSrc}
+                  crop={crop}
+                  aspect={1}
+                  onCropChange={setCrop}
+                  onCropComplete={onCropComplete}
+                />
+              </div>
+              <button
+                onClick={generateCroppedImage}
+                disabled={!imageSrc}
+                className="p-4 bg-black text-white font-semibold rounded-md"
+              >
+                Crop & Use
+              </button>
+            </div>
+          )}
+        </>
+      }
+      {selectedImage && <img src={selectedImage} alt="Selected" />}
     </div>
   )
 }
