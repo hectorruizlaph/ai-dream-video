@@ -1,9 +1,9 @@
-import {useState} from "react"
+import {useState, useEffect} from "react"
 import Head from "next/head"
 import Image from "next/image"
 import {useAppContext} from "../context/context"
 import CreateVideoForm from "../components/createVideoForm"
-// import {ImageUpload} from "../components/imageUpload"
+import {ImageUpload} from "../components/imageUpload"
 // import ImageUpload from "../components/imageUpload2"
 // import Uploader from "../components/uploader3"
 // import Uploader4 from "../components/uploader4"
@@ -12,6 +12,8 @@ import CreateVideoForm from "../components/createVideoForm"
 import ImageUploadAndCrop from "../components/ImageUploadAndCrop"
 import {Stepper, Button, Group} from "@mantine/core"
 import {Clock, Photo, Palette, CircleCheck} from "tabler-icons-react"
+
+// import Step1Options from "../components/step1/options"
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
@@ -24,11 +26,27 @@ const Home = () => {
   const [replicateKey, setReplicateKey] = useState("")
 
   // Stepper
-  const [active, setActive] = useState(1)
-  const nextStep = () =>
-    setActive((current) => (current < 3 ? current + 1 : current))
-  const prevStep = () =>
-    setActive((current) => (current > 0 ? current - 1 : current))
+  const [active, setActive] = useState(0)
+  const [highestStepVisited, setHighestStepVisited] = useState(active)
+
+  const handleStepChange = (nextStep) => {
+    const isOutOfBounds = nextStep > 3 || nextStep < 0
+    if (isOutOfBounds) {
+      return
+    }
+    setActive(nextStep)
+    setHighestStepVisited((hSC) => Math.max(hSC, nextStep))
+  }
+
+  const prevStep = () => handleStepChange(active - 1)
+  const nextStep = () => handleStepChange(active + 1)
+
+  // Allow the user to freely go back and forth between visited steps,
+  // and to the second step only if there's a selectedImage
+  const shouldAllowSelectStep = (step) =>
+    highestStepVisited >= step &&
+    active !== step &&
+    (step !== 1 || (step === 1 && selectedImage))
 
   const {selectedImage, setSelectedImage} = useAppContext()
 
@@ -94,6 +112,11 @@ const Home = () => {
     }
   }
 
+  useEffect(() => {
+    console.log(typeof selectedImage)
+    console.log(selectedImage)
+  })
+
   return (
     <div className="container max-w-2xl mx-auto p-5">
       <Head>
@@ -133,22 +156,79 @@ const Home = () => {
             label="Base Image"
             description="Select your base image"
             color="black"
+            allowStepSelect={shouldAllowSelectStep(0)}
           >
-            Step 1 content: Create an account
+            <h1 className="py-2 text-center font-bold text-3xl pt-4">
+              Select your base photo
+            </h1>
+            <h1 className="py-4 text-center font-bold text-2xl">
+              {/* Upload an image or  */}
+              Dream an image
+            </h1>
+            {error && <div>{error}</div>}
+            <div className="max-w-2xl pt-2">
+              {/* <Step1Options /> */}
+              <ImageUploadAndCrop />
+            </div>
+            <div>
+              <p className="font-semibold text-center py-2">Or</p>
+            </div>
+            <div className="max-w-[512px] pt-2 mx-auto">
+              {prediction ? (
+                <div className="grid grid-cols-2 gap-2">
+                  {prediction.output ? (
+                    <>
+                      {prediction.output.map((imageUrl, index) => (
+                        <div
+                          key={index}
+                          className={`mx-auto ${
+                            selectedImage === imageUrl
+                              ? "border-4 border-teal-500"
+                              : ""
+                          }`}
+                          onClick={() => handleImageSelect(imageUrl)}
+                        >
+                          <Image
+                            src={imageUrl}
+                            alt="output"
+                            width={250}
+                            height={250}
+                            className="cursor-pointer rounded-sm hover:ring-4 hover:ring-teal-500 transition-all"
+                          />
+                        </div>
+                      ))}
+                    </>
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
+            <form className="w-full flex mt-2" onSubmit={handleSubmit}>
+              <input
+                type="text"
+                className="flex-grow"
+                name="prompt"
+                placeholder="Enter a prompt to display an image"
+              />
+              <button className="button" type="submit">
+                Go!
+              </button>
+            </form>
           </Stepper.Step>
           <Stepper.Step
             icon={<Palette size="1.1rem" />}
             label="Create"
             description="Generate your prompts"
             color="black"
+            allowStepSelect={shouldAllowSelectStep(1)}
           >
-            Step 2 content: Verify email
+            <CreateVideoForm />
           </Stepper.Step>
           <Stepper.Step
             icon={<Clock size="1.1rem" />}
             label="Wait"
             description="Wait for the AI"
             color="black"
+            allowStepSelect={shouldAllowSelectStep(2)}
           >
             Step 3 content: Get full access
           </Stepper.Step>
@@ -161,66 +241,15 @@ const Home = () => {
           <Button variant="default" onClick={prevStep}>
             Back
           </Button>
-          <Button variant="default" onClick={nextStep}>
+          <Button
+            variant="default"
+            onClick={nextStep}
+            disabled={selectedImage ? false : true}
+          >
             Next step
           </Button>
         </Group>
       </>
-      <h1 className="py-2 text-center font-bold text-3xl pt-4">
-        Select your base photo
-      </h1>
-      <h1 className="py-4 text-center font-bold text-2xl">
-        {/* Upload an image or  */}
-        Dream an image
-      </h1>
-      {error && <div>{error}</div>}
-      <div className="max-w-2xl pt-2">
-        <ImageUploadAndCrop />
-      </div>
-      <div>
-        <p className="font-semibold text-center py-2">Or</p>
-      </div>
-      <div className="max-w-[512px] pt-2 mx-auto">
-        {prediction ? (
-          <div className="grid grid-cols-2 gap-2">
-            {prediction.output ? (
-              <>
-                {prediction.output.map((imageUrl, index) => (
-                  <div
-                    key={index}
-                    className={`mx-auto ${
-                      selectedImage === imageUrl
-                        ? "border-4 border-teal-500"
-                        : ""
-                    }`}
-                    onClick={() => handleImageSelect(imageUrl)}
-                  >
-                    <Image
-                      src={imageUrl}
-                      alt="output"
-                      width={250}
-                      height={250}
-                      className="cursor-pointer rounded-sm hover:ring-4 hover:ring-teal-500 transition-all"
-                    />
-                  </div>
-                ))}
-              </>
-            ) : null}
-          </div>
-        ) : null}
-      </div>
-      <form className="w-full flex mt-2" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          className="flex-grow"
-          name="prompt"
-          placeholder="Enter a prompt to display an image"
-        />
-        <button className="button" type="submit">
-          Go!
-        </button>
-      </form>
-      <CreateVideoForm />
     </div>
   )
 }
