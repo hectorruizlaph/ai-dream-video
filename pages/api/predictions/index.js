@@ -7,7 +7,7 @@ import Replicate from "replicate"
 export default async function handler(req, res) {
   console.log("api/predictions/index.js req:", req?.body)
 
-  const replicateKey = req.body.replicateKey
+  const replicateKey = req.body.replicateKey || process.env.REPLICATE_API_TOKEN
   const replicate = new Replicate({
     auth: replicateKey || process.env.REPLICATE_API_TOKEN,
   })
@@ -43,7 +43,7 @@ export default async function handler(req, res) {
     return
   }
 
-  prediction.replicateKey = replicateKey
+  prediction.replicateKey = replicateKey || process.env.REPLICATE_API_TOKEN
 
   res.statusCode = 201
   res.end(JSON.stringify(prediction))

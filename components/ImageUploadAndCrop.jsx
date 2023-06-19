@@ -88,6 +88,7 @@ const ImageUploadAndCrop = () => {
                 width={100}
                 height={100}
                 className="mx-auto"
+                onClick={() => setSelectedImage(null)}
               />
               <p className="text-slate-700">Click to upload image</p>
             </label>

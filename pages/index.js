@@ -3,25 +3,23 @@ import Head from "next/head"
 import Image from "next/image"
 import {useAppContext} from "../context/context"
 import CreateVideoForm from "../components/createVideoForm"
-import {ImageUpload} from "../components/imageUpload"
-// import ImageUpload from "../components/imageUpload2"
-// import Uploader from "../components/uploader3"
-// import Uploader4 from "../components/uploader4"
-// import {Demo} from "../components/demo"
-// import {ReactCroper} from "../components/reactCroper"
 import ImageUploadAndCrop from "../components/ImageUploadAndCrop"
 import {Stepper, Button, Group, Tooltip} from "@mantine/core"
-import {Clock, Photo, Palette, CircleCheck} from "tabler-icons-react"
+import {
+  Clock,
+  Photo,
+  Palette,
+  CircleCheck,
+  ChevronRight,
+} from "tabler-icons-react"
 
 // import Step1Options from "../components/step1/options"
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
 const Home = () => {
-  const [image, setImage] = useState("")
-  const [isUploaded, setIsUploaded] = useState(false)
-
   const [prediction, setPrediction] = useState(null)
+  const [loadingPrediction, setLoadingPrediction] = useState(false)
   const [error, setError] = useState(null)
   const [replicateKey, setReplicateKey] = useState("")
 
@@ -57,7 +55,7 @@ const Home = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
+    setLoadingPrediction(true)
     const response = await fetch("/api/predictions", {
       method: "POST",
       headers: {
@@ -71,6 +69,7 @@ const Home = () => {
     let prediction = await response.json()
     if (response.status !== 201) {
       setError(prediction.detail)
+      setLoadingPrediction(false)
       return
     }
     setPrediction(prediction)
@@ -92,10 +91,14 @@ const Home = () => {
       prediction = await response.json()
       if (response.status !== 200) {
         setError(prediction.detail)
+        setLoadingPrediction(false)
         return
       }
       console.log(JSON.stringify(prediction, null, 2))
       setPrediction(prediction)
+      if (prediction.output && prediction.output.length >= 3) {
+        setLoadingPrediction(false)
+      }
     }
   }
 
@@ -195,9 +198,23 @@ const Home = () => {
                 name="prompt"
                 placeholder="Enter a prompt to display an image"
               />
-              <button className="button" type="submit">
+              <Button
+                variant="default"
+                color="dark"
+                size="md"
+                type="submit"
+                rightIcon={<Photo size="1rem" />}
+                loading={loadingPrediction}
+              >
                 Generate Image
-              </button>
+              </Button>
+              {/* <button
+                className="button"
+                type="submit"
+                disabled={loadingPrediction}
+              >
+                Generate Image
+              </button> */}
             </form>
           </Stepper.Step>
           <Stepper.Step
@@ -228,18 +245,26 @@ const Home = () => {
             variant="default"
             onClick={prevStep}
             className={active === 0 ? "hidden" : "block"}
+            color="dark"
           >
             Back
           </Button>
-          <Tooltip label="Select your base image" position="bottom" withArrow>
+          <Tooltip
+            label="Select your base image"
+            position="bottom"
+            withArrow
+            disabled={active !== 0 ? true : false}
+          >
             <div>
               <Button
                 variant="default"
                 onClick={nextStep}
                 disabled={selectedImage ? false : true}
+                color="dark"
+                rightIcon={<ChevronRight size="1rem" />}
               >
                 {active === 0
-                  ? "Use Image & Create Prompts"
+                  ? "Use Image"
                   : active === 1
                   ? "Create Video"
                   : "Next"}

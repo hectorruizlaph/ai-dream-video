@@ -37,7 +37,7 @@ export default function CreateVideoForm() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 py-6 sm:py-12">
+    <div className="flex flex-col items-center justify-center py-6 sm:py-12">
       <form
         onSubmit={handleSubmit}
         className="p-6 bg-white rounded shadow-xl w-80"
