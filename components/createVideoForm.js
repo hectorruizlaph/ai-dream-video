@@ -13,6 +13,8 @@ export default function CreateVideoForm() {
 
     setVideoStatus("loading")
 
+    console.log(selectedImage)
+
     const res = await fetch("/api/video", {
       method: "POST",
       headers: {
@@ -32,6 +34,7 @@ export default function CreateVideoForm() {
       setVideoStatus("ready")
       // console.log("data.videoURL:", `${data.data.videoURL}`)
       setVideoURL(`${data.data.videoURL}`)
+      console.log("selctedImage: ", selectedImage)
       // console.log("videoURL_client:", videoURL)
     }
   }

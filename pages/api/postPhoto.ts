@@ -1,42 +1,57 @@
-import {createPresignedPost} from "@aws-sdk/s3-presigned-post"
-import {S3Client} from "@aws-sdk/client-s3"
 import {NextApiRequest, NextApiResponse} from "next"
 import {getErrorMessage} from "../../utils/getErrorMessage"
-import {v4 as uuidv4} from "uuid"
+import S3 from "aws-sdk/clients/s3"
+import {randomUUID} from "crypto"
+
+const s3 = new S3({
+  apiVersion: "2006-03-01",
+  accessKeyId: process.env.S3_UPLOAD_KEY,
+  secretAccessKey: process.env.S3_UPLOAD_SECRET,
+  region: process.env.S3_UPLOAD_REGION,
+  signatureVersion: "v4",
+})
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const {query} = req
   const {filename, contentType} = query
 
-  console.log("filename:", filename)
-  console.log("contentType:", contentType)
+  console.log("postPhoto - filename:", filename) // newFile.png
+  console.log("postPhoto - contentType:", contentType) // image/png
 
   try {
-    const client = new S3Client({region: process.env.S3_UPLOAD_REGION})
+    // const client = new S3Client({region: process.env.S3_UPLOAD_REGION})
 
-    console.log("S3 region:", process.env.S3_UPLOAD_REGION)
+    const ex = (contentType as string).split("/")[1]
+    const Key = `images/${randomUUID()}.${ex}`
 
-    const fileKey = `images/${uuidv4()}`
+    const s3Params = {
+      Bucket: process.env.S3_UPLOAD_BUCKET,
+      Key,
+      Expires: 60,
+      ContentType: `image/${ex}`,
+    }
 
-    const {url, fields} = await createPresignedPost(client, {
-      Bucket: process.env.S3_UPLOAD_BUCKET!,
-      Key: fileKey,
-      Conditions: [["starts-with", "$Content-Type", contentType?.toString()!]],
-      Fields: {
-        acl: "public-read",
-        "Content-Type": contentType?.toString()!,
-      },
-      Expires: 600,
-    })
+    const uploadUrl = await s3.getSignedUrl("putObject", s3Params)
+    console.log("uploadUrl", uploadUrl)
+    const cleanUrl = (uploadUrl as string).split("?")[0]
 
-    console.log("url:", url)
-    console.log("fields:", fields)
+    console.log("cleanUrl: ", cleanUrl)
+    // const {url, fields} = await createPresignedPost(client, {
+    //   Bucket: process.env.S3_UPLOAD_BUCKET!,
+    //   Key: fileKey,
+    //   Conditions: [["starts-with", "$Content-Type", contentType?.toString()!]],
+    //   Fields: {
+    //     acl: "public-read",
+    //     "Content-Type": contentType?.toString()!,
+    //   },
+    //   Expires: 600,
+    // })
 
-    const imageUrl = `https://s3.${process.env.S3_UPLOAD_REGION}.amazonaws.com/${process.env.S3_UPLOAD_BUCKET}/${fileKey}`
+    const imageUrl = `https://${process.env.S3_UPLOAD_BUCKET}s3.${process.env.S3_UPLOAD_REGION}.amazonaws.com/${Key}`
 
-    console.log("imageUrl:", imageUrl)
+    console.log("cleanUrl: ", cleanUrl, "imageUrl:", imageUrl)
 
-    return res.json({url, fields, imageUrl})
+    return res.json({cleanUrl, imageUrl})
   } catch (error) {
     console.log("Error:", error)
     return res.json({error: getErrorMessage(error)})

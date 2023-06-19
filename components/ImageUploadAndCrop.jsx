@@ -3,6 +3,27 @@ import Cropper from "react-easy-crop"
 import getCroppedImg from "../utils/cropImage"
 import {useAppContext} from "../context/context"
 import Image from "next/image"
+import axios from "axios"
+
+// async function uploadToS3(file) {
+//   const formData = new FormData(e.target)
+
+//   const file = formData.get("file")
+
+//   if (!file) {
+//     return null
+//   }
+
+//   const fileType = encodeURIComponent(file.type)
+
+//   const {data} = await axios.get(`/api/media?fileType=${fileType}`)
+
+//   const {uploadUrl, key} = data
+
+//   await axios.put(uploadUrl, file)
+
+//   return key
+// }
 
 const ImageUploadAndCrop = () => {
   const [imageSrc, setImageSrc] = useState(null)
@@ -38,35 +59,43 @@ const ImageUploadAndCrop = () => {
   const generateCroppedImage = async () => {
     const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels)
 
+    console.log(
+      "imageSrc: ",
+      imageSrc,
+      "croppedAreaPixels: ",
+      croppedAreaPixels
+    )
+    const type = imageSrc.split(";")[0].split(":")[1]
     // Use filename and content type of your cropped image
     const filename = croppedImage.name // should be 'newFile.png'
-    const contentType = croppedImage.type // should be 'image/png'
+    const contentType = type // should be 'image/png'
+
+    console.log("contentType:", contentType)
 
     try {
       // Request a pre-signed URL from the postPhoto API
       const res = await fetch(
         `/api/postPhoto?filename=${filename}&contentType=${contentType}`
       )
-      const {url, fields, imageUrl} = await res.json()
-
+      const {cleanUrl, imageUrl} = await res.json()
+      console.log("cleanUrl: ", cleanUrl, "imageUrl :", imageUrl)
       // Create a form to POST the cropped image to the pre-signed URL
       const formData = new FormData()
-      Object.entries({...fields, file: croppedImage}).forEach(
-        ([key, value]) => {
-          formData.append(key, value)
-        }
-      )
+      formData.append("file", croppedImage)
 
       // POST the cropped image to the pre-signed URL
-      const imageRes = await fetch(url, {
-        method: "POST",
-        body: formData,
+      const imageRes = await fetch(cleanUrl, {
+        method: "PUT",
+        body: croppedImage,
+        headers: {
+          "Content-Type": contentType,
+        },
       })
 
       // If the request was successful, the image is now stored in your S3 bucket
       if (imageRes.ok) {
-        console.log("Image uploaded successfully!", imageUrl)
-        setSelectedImage(imageUrl)
+        console.log("Image uploaded successfully!", cleanUrl)
+        setSelectedImage(cleanUrl)
       } else {
         console.error("Failed to upload image:", imageRes)
       }

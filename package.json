@@ -42,8 +42,7 @@
     "replicate": "^0.6.0",
     "sharp": "^0.32.1",
     "swr": "^2.1.5",
-    "tabler-icons-react": "^1.56.0",
-    "uuid": "^9.0.0"
+    "tabler-icons-react": "^1.56.0"
   },
   "devDependencies": {
     "@types/node": "20.3.1",

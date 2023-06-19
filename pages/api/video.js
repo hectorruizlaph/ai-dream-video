@@ -18,24 +18,22 @@ export default async function handler(req, res) {
         input: {
           model_checkpoint: "revAnimated_v122.ckpt",
           sampler: "euler_ancestral",
-          animation_prompts:
-            animationPrompts ||
-            "25: a beautiful banana | 50: an astronaut | 75: an astronaut in Mars",
+          animation_prompts: animationPrompts,
+          // || "25: a beautiful banana | 50: an astronaut | 75: an astronaut in Mars",
           // "0: a beautiful banana | 5: an astronaut | 10: an astronaut in Mars",
-          max_frames: 100,
-          num_inference_steps: 50,
+          max_frames: 15,
+          num_inference_steps: 80,
           fps: 15,
           use_init: true,
-          init_image:
-            initImage ||
-            "https://replicate.delivery/pbxt/XgwJVVHDIDJKKddxTa8teF5Qcgfwj4Ba7EUsqaQRNN1g5qFRA/out-0.png",
+          init_image: String(initImage),
+          // || "https://replicate.delivery/pbxt/XgwJVVHDIDJKKddxTa8teF5Qcgfwj4Ba7EUsqaQRNN1g5qFRA/out-0.png"
           animation_mode: "3D",
           zoom: "0:(1.00)",
           translation_x: "0:(0)",
           translation_y: "0:(0)",
           translation_z: "0:(0)",
           // strength_schedule: "0: (0.9), 25: (0.65), 50: (0.65), 75: (0.65)",
-          strength_schedule: "0: (0.9)",
+          strength_schedule: "0: (1)",
           guidance_scale: 7,
           width: 512,
           height: 512,
@@ -90,7 +88,7 @@ export default async function handler(req, res) {
           },
         }
       )
-      // console.log("Status:", statusResponse.data.status)
+      console.log("Status:", statusResponse.data.status)
     } while (statusResponse.data.status === "IN_PROGRESS")
 
     if (statusResponse.data.status === "COMPLETED") {
@@ -98,10 +96,10 @@ export default async function handler(req, res) {
 
       // remove everything after ?
       cleanFullUrl = fullUrl.split("?")[0]
-      // console.log("cleanFullUrl:", cleanFullUrl)
+      console.log("cleanFullUrl:", cleanFullUrl)
 
       videoId = cleanFullUrl.split("/").pop().split(".")[0]
-      // console.log("videoId:", videoId)
+      console.log("videoId:", videoId)
 
       await prisma.video.update({
         where: {runpodId: runpodId},
@@ -111,13 +109,13 @@ export default async function handler(req, res) {
         },
       })
 
-      // console.log("Video ID and URL saved:", videoId, fullUrl)
+      console.log("Video ID and URL saved:", videoId, fullUrl)
     }
 
-    // console.log(
-    //   "videoURL:",
-    //   `${process.env.S3_ENDPOINT_URL}/${process.env.S3_UPLOAD_BUCKET}/${videoId}.mp4`
-    // )
+    console.log(
+      "videoURL:",
+      `${process.env.S3_ENDPOINT_URL}/${process.env.S3_UPLOAD_BUCKET}/${videoId}.mp4`
+    )
 
     res.status(200).json({
       message: "Video creation process completed",
