@@ -1,5 +1,3 @@
-// utils/cropImage.js
-
 import {Area} from "react-easy-crop/types"
 
 // Converts a Blob into a File
@@ -9,8 +7,7 @@ const blobToFile = (blob: Blob, name: string): File => {
 
 const getCroppedImg = async (
   imageSrc: string,
-  croppedAreaPixels: Area,
-  format: string
+  croppedAreaPixels: Area
 ): Promise<File> => {
   const image = new Image()
   image.src = imageSrc
@@ -39,27 +36,15 @@ const getCroppedImg = async (
     canvas.width,
     canvas.height
   )
-  let mimeType
-  switch (format.toLowerCase()) {
-    case "jpg":
-    case "jpeg":
-      mimeType = "image/jpeg"
-      break
-    case "webp":
-      mimeType = "image/webp"
-      break
-    default:
-      mimeType = "image/png" // Fallback to PNG if the format is not supported.
-  }
 
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
       if (blob) {
-        resolve(blobToFile(blob, `newFile.${format}`))
+        resolve(blobToFile(blob, "newFile.png"))
       } else {
         reject("Cropping failed: Canvas is empty or could not be encoded.")
       }
-    }, mimeType)
+    }, "image/png")
   })
 }
 
