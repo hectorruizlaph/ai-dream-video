@@ -68,7 +68,9 @@ const ImageUploadAndCrop = () => {
         console.log("Image uploaded successfully!", imageUrl)
         setSelectedImage(imageUrl)
       } else {
+        const errorMessage = await imageRes.text()
         console.error("Failed to upload image:", imageRes)
+        console.error("Failed to upload image:", errorMessage)
       }
     } catch (error) {
       console.error("An error occurred:", error)

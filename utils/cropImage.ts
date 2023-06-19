@@ -9,7 +9,8 @@ const blobToFile = (blob: Blob, name: string): File => {
 
 const getCroppedImg = async (
   imageSrc: string,
-  croppedAreaPixels: Area
+  croppedAreaPixels: Area,
+  format: string
 ): Promise<File> => {
   const image = new Image()
   image.src = imageSrc
@@ -38,15 +39,27 @@ const getCroppedImg = async (
     canvas.width,
     canvas.height
   )
+  let mimeType
+  switch (format.toLowerCase()) {
+    case "jpg":
+    case "jpeg":
+      mimeType = "image/jpeg"
+      break
+    case "webp":
+      mimeType = "image/webp"
+      break
+    default:
+      mimeType = "image/png" // Fallback to PNG if the format is not supported.
+  }
 
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
       if (blob) {
-        resolve(blobToFile(blob, "newFile.png"))
+        resolve(blobToFile(blob, `newFile.${format}`))
       } else {
         reject("Cropping failed: Canvas is empty or could not be encoded.")
       }
-    }, "image/png")
+    }, mimeType)
   })
 }
 
