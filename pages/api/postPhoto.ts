@@ -8,8 +8,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const {query} = req
   const {filename, contentType} = query
 
+  console.log("filename:", filename)
+  console.log("contentType:", contentType)
+
   try {
     const client = new S3Client({region: process.env.S3_UPLOAD_REGION})
+
+    console.log("S3 region:", process.env.S3_UPLOAD_REGION)
 
     const fileKey = `images/${uuidv4()}`
 
@@ -23,10 +28,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
       Expires: 600,
     })
+
+    console.log("url:", url)
+    console.log("fields:", fields)
+
     const imageUrl = `https://s3.${process.env.S3_UPLOAD_REGION}.amazonaws.com/${process.env.S3_UPLOAD_BUCKET}/${fileKey}`
+
+    console.log("imageUrl:", imageUrl)
 
     return res.json({url, fields, imageUrl})
   } catch (error) {
+    console.log("Error:", error)
     return res.json({error: getErrorMessage(error)})
   }
 }
