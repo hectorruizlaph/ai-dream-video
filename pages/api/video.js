@@ -9,6 +9,8 @@ export default async function handler(req, res) {
   const animationPrompts = req.body.animationPrompts
   const initImage = req.body.initImage
 
+  console.log("animationPrompts :", animationPrompts, "initImage :", initImage)
+
   let videoId, cleanFullUrl
 
   try {
@@ -18,11 +20,11 @@ export default async function handler(req, res) {
         input: {
           model_checkpoint: "revAnimated_v122.ckpt",
           sampler: "euler_ancestral",
-          animation_prompts: animationPrompts,
+          animation_prompts: String(animationPrompts),
           // || "25: a beautiful banana | 50: an astronaut | 75: an astronaut in Mars",
           // "0: a beautiful banana | 5: an astronaut | 10: an astronaut in Mars",
-          max_frames: 15,
-          num_inference_steps: 80,
+          max_frames: 100,
+          num_inference_steps: 25,
           fps: 15,
           use_init: true,
           init_image: String(initImage),
@@ -33,7 +35,7 @@ export default async function handler(req, res) {
           translation_y: "0:(0)",
           translation_z: "0:(0)",
           // strength_schedule: "0: (0.9), 25: (0.65), 50: (0.65), 75: (0.65)",
-          strength_schedule: "0: (1)",
+          strength_schedule: "0: (1.0), 1: (1.0), 5: (0.75), 100: (0.75)",
           guidance_scale: 7,
           width: 512,
           height: 512,

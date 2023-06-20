@@ -2,8 +2,10 @@ import {useState, useEffect} from "react"
 import Head from "next/head"
 import Image from "next/image"
 import {useAppContext} from "../context/context"
-import CreateVideoForm from "../components/createVideoForm"
+// import CreateVideoForm from "../components/createVideoForm"
+import PromptsInputs from "../components/step2/promptsInputs"
 import ImageUploadAndCrop from "../components/ImageUploadAndCrop"
+import VideoOutput from "../components/step3/videoOutput"
 import {Stepper, Button, Group, Tooltip} from "@mantine/core"
 import {
   Clock,
@@ -46,7 +48,13 @@ const Home = () => {
     active !== step &&
     (step !== 1 || (step === 1 && selectedImage))
 
-  const {selectedImage, setSelectedImage} = useAppContext()
+  const {
+    selectedImage,
+    setSelectedImage,
+    animationPrompts,
+    handleSubmitCreateVideo,
+    videoURL,
+  } = useAppContext()
 
   const handleImageSelect = (imageUrl) => {
     console.log("selected image:", imageUrl)
@@ -105,6 +113,8 @@ const Home = () => {
   useEffect(() => {
     console.log(typeof selectedImage)
     console.log(selectedImage)
+    console.log("animationPrompts: ", animationPrompts)
+
     if (selectedImage) {
       handleStepChange(active + 1)
     }
@@ -224,16 +234,17 @@ const Home = () => {
             color="black"
             allowStepSelect={shouldAllowSelectStep(1)}
           >
-            <CreateVideoForm />
+            {/* <CreateVideoForm /> */}
+            <PromptsInputs />
           </Stepper.Step>
           <Stepper.Step
             icon={<Clock size="1.1rem" />}
             label="Wait"
-            description="Wait for the AI"
+            description="Get video"
             color="black"
             allowStepSelect={shouldAllowSelectStep(2)}
           >
-            Step 3 content: Get full access
+            <VideoOutput />
           </Stepper.Step>
           <Stepper.Completed>
             Completed, click back button to get to previous step
@@ -250,7 +261,12 @@ const Home = () => {
             Back
           </Button>
           <Tooltip
-            label="Select your base image"
+            label={
+              (active === 0 && "Select your base image") ||
+              (active === 1 && "Create your prompts")
+              // animationPrompts === "50: A beautiful forest" &&
+              // "Create your prompts")
+            }
             position="bottom"
             withArrow
             disabled={active !== 0 ? true : false}
@@ -258,8 +274,21 @@ const Home = () => {
             <div>
               <Button
                 variant="default"
-                onClick={nextStep}
-                disabled={selectedImage ? false : true}
+                onClick={() => {
+                  if (active === 1) {
+                    if (!videoURL) handleSubmitCreateVideo()
+                    nextStep()
+                  } else {
+                    nextStep()
+                  }
+                }}
+                disabled={
+                  !selectedImage ||
+                  (active === 1 && !animationPrompts) ||
+                  (active === 1 &&
+                    animationPrompts === "50: A beautiful forest") ||
+                  videoURL
+                }
                 color="dark"
                 rightIcon={<ChevronRight size="1rem" />}
               >
@@ -269,6 +298,16 @@ const Home = () => {
                   ? "Create Video"
                   : "Next"}
               </Button>
+              {active === 1 && videoURL && (
+                <Button
+                  variant="default"
+                  onClick={nextStep}
+                  color="dark"
+                  rightIcon={<ChevronRight size="1rem" />}
+                >
+                  See Video
+                </Button>
+              )}
             </div>
           </Tooltip>
         </Group>
