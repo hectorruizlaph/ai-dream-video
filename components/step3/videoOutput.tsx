@@ -15,7 +15,7 @@ export default function VideoOutput() {
   return (
     <Box mx="auto">
       {videoStatus === "loading" ? (
-        <>
+        <Center mx="auto">
           <Text size="sm" weight={500} mt="md">
             Our AI it&apos;s creating your video...
           </Text>
@@ -23,10 +23,10 @@ export default function VideoOutput() {
             className="rounded-full"
             alt="ai-loading"
             src="/ai-loading.gif"
-            width={800}
-            height={600}
+            width={512}
+            height={512}
           />
-        </>
+        </Center>
       ) : (
         <Center mx="auto">
           <video width="512" height="512" controls>
