@@ -103,11 +103,11 @@ const ImageUploadAndCrop = () => {
     }
   }
 
-  useEffect(() => {
-    setSelectedImage(
-      "https://replicate.delivery/pbxt/XgwJVVHDIDJKKddxTa8teF5Qcgfwj4Ba7EUsqaQRNN1g5qFRA/out-0.png"
-    )
-  }, [])
+  // useEffect(() => {
+  //   setSelectedImage(
+  //     "https://replicate.delivery/pbxt/XgwJVVHDIDJKKddxTa8teF5Qcgfwj4Ba7EUsqaQRNN1g5qFRA/out-0.png"
+  //   )
+  // }, [])
 
   return (
     <div className="flex flex-col items-center space-y-4">

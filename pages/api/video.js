@@ -35,7 +35,7 @@ export default async function handler(req, res) {
           translation_y: "0:(0)",
           translation_z: "0:(0)",
           // strength_schedule: "0: (0.9), 25: (0.65), 50: (0.65), 75: (0.65)",
-          strength_schedule: "0: (1.0), 1: (1.0), 5: (0.75), 100: (0.75)",
+          strength_schedule: "0: (0.99), 1: (0.99), 5: (0.70), 100: (0.70)",
           guidance_scale: 7,
           width: 512,
           height: 512,
