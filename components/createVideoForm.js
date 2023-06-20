@@ -1,12 +1,21 @@
 import {useState, useContext} from "react"
 import {appContext} from "../context/context.js"
+import {Button} from "@mantine/core"
+import {Video} from "tabler-icons-react"
+import PromptsInputs from "./step2/promptsInputs"
 
 export default function CreateVideoForm() {
-  const [animationPrompts, setAnimationPrompts] = useState("")
+  // const [animationPrompts, setAnimationPrompts] = useState("")
   const [videoStatus, setVideoStatus] = useState("idle") // 'idle' | 'loading' | 'ready'
   const [videoURL, setVideoURL] = useState("")
 
-  const {selectedImage} = useContext(appContext)
+  const {
+    selectedImage,
+    animationPrompts,
+    videoJustCreated,
+    setVideoJustCreated,
+    setAnimationPrompts,
+  } = useContext(appContext)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -41,7 +50,7 @@ export default function CreateVideoForm() {
 
   return (
     <div className="flex flex-col items-center justify-center py-6 sm:py-12">
-      <form
+      {/* <form
         onSubmit={handleSubmit}
         className="p-6 bg-white rounded shadow-xl w-80"
       >
@@ -56,13 +65,24 @@ export default function CreateVideoForm() {
             />
           </label>
         </div>
-        <button
+        <Button
+          variant="default"
+          color="dark"
+          size="md"
+          type="submit"
+          rightIcon={<Video size="1rem" />}
+          // loading={loadingPrediction}
+        >
+          Create Video
+        </Button>
+         <button
           type="submit"
           className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm bg-black text-white bg- hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
         >
-          Submit
-        </button>
-      </form>
+          Create Video
+        </button> 
+      </form> */}
+      <PromptsInputs />
 
       {videoStatus === "loading" && (
         <p className="mt-6 text-center text-gray-500">

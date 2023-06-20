@@ -1,9 +1,8 @@
-import React, {useState, useCallback} from "react"
+import React, {useState, useCallback, useEffect} from "react"
 import Cropper from "react-easy-crop"
 import getCroppedImg from "../utils/cropImage"
 import {useAppContext} from "../context/context"
 import Image from "next/image"
-import axios from "axios"
 
 // async function uploadToS3(file) {
 //   const formData = new FormData(e.target)
@@ -103,6 +102,12 @@ const ImageUploadAndCrop = () => {
       console.error("An error occurred:", error)
     }
   }
+
+  useEffect(() => {
+    setSelectedImage(
+      "https://replicate.delivery/pbxt/XgwJVVHDIDJKKddxTa8teF5Qcgfwj4Ba7EUsqaQRNN1g5qFRA/out-0.png"
+    )
+  }, [])
 
   return (
     <div className="flex flex-col items-center space-y-4">
