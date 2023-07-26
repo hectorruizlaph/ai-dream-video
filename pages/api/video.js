@@ -7,6 +7,8 @@ export default async function handler(req, res) {
     return res.status(405).json({message: 'Method not allowed'})
   }
 
+  console.log('||||||||||| api/video.js api :', req)
+
   const animationPrompts = req.body.animationPrompts
   const initImage = req.body.initImage
 
@@ -103,7 +105,6 @@ export default async function handler(req, res) {
     if (statusResponse.data.status === 'COMPLETED') {
       let fullUrl = statusResponse.data.output.file_url
 
-      // remove everything after ?
       cleanFullUrl = fullUrl.split('?')[0]
       console.log('cleanFullUrl:', cleanFullUrl)
 
