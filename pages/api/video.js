@@ -58,7 +58,8 @@ export default async function handler(req, res) {
 
   try {
     const response = await axios.post(
-      'https://api.runpod.ai/v2/r19wiv95jb17vv/run',
+      // 'https://api.runpod.ai/v2/r19wiv95jb17vv/run',
+      'https://api.runpod.ai/v2/ysw8mgd9gu2ryd/run',
       {
         input: {
           model_checkpoint: 'revAnimated_v122.ckpt',
@@ -128,7 +129,7 @@ export default async function handler(req, res) {
     do {
       await new Promise((r) => setTimeout(r, 10000))
       statusResponse = await axios.get(
-        `https://api.runpod.ai/v2/r19wiv95jb17vv/status/${runpodId}`,
+        `https://api.runpod.ai/v2/ysw8mgd9gu2ryd/status/${runpodId}`,
         {
           headers: {
             // "Content-Type": "application/json",
