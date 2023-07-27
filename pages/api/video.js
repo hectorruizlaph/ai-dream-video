@@ -1,45 +1,5 @@
 import axios from 'axios'
 import prisma from '../../utils/prisma'
-import fs from 'fs'
-import ffmpeg from 'fluent-ffmpeg'
-import {promisify} from 'util'
-import https from 'https'
-
-const readFile = promisify(fs.readFile)
-const unlink = promisify(fs.unlink)
-
-// Extract the last frame from a video
-async function extractLastFrame(videoPath, imagePath) {
-  return new Promise((resolve, reject) => {
-    ffmpeg(videoPath)
-      .on('end', resolve)
-      .on('error', reject)
-      .screenshots({
-        timestamps: ['100%'],
-        filename: imagePath,
-        folder: '',
-      })
-  })
-}
-
-// Convert an image file to a base64 string
-async function imageToBase64(imagePath) {
-  const data = await readFile(imagePath)
-  return data.toString('base64')
-}
-
-// Download the video file
-async function downloadVideo(videoURL, videoPath) {
-  const writer = fs.createWriteStream(videoPath)
-
-  return new Promise((resolve, reject) => {
-    https.get(videoURL, (response) => {
-      response.pipe(writer)
-      writer.on('finish', resolve)
-      writer.on('error', reject)
-    })
-  })
-}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -54,7 +14,6 @@ export default async function handler(req, res) {
   console.log('animationPrompts :', animationPrompts, 'initImage :', initImage)
 
   let videoId, cleanFullUrl
-  let videoPath = ''
 
   try {
     const response = await axios.post(
@@ -169,15 +128,6 @@ export default async function handler(req, res) {
     )
 
     const videoURL = `${process.env.S3_ENDPOINT_URL}/${process.env.S3_UPLOAD_BUCKET}/${videoId}.mp4`
-    const videoPath = `/tmp/${videoId}.mp4`
-    const imagePath = `/tmp/${videoId}_last_frame.png`
-
-    await downloadVideo(videoURL, videoPath)
-    await extractLastFrame(videoPath, imagePath)
-
-    const imageBase64 = await imageToBase64(imagePath)
-    await unlink(videoPath)
-    await unlink(imagePath)
 
     res.status(200).json({
       message: 'Video creation process completed',
@@ -186,7 +136,6 @@ export default async function handler(req, res) {
         status: statusResponse.data.status,
         videoId: String(videoId),
         videoURL: videoURL,
-        lastFrame: imageBase64,
       },
     })
   } catch (error) {
