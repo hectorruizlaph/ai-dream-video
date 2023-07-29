@@ -111,33 +111,44 @@ export default async function handler(req, res) {
       videoId = cleanFullUrl.split('/').pop().split('.')[0]
       console.log('videoId:', videoId)
 
+      console.log('Video ID and URL saved:', videoId, fullUrl)
+
+      console.log(
+        'videoURL:',
+        `${process.env.S3_ENDPOINT_URL}/${process.env.S3_UPLOAD_BUCKET}/${videoId}.mp4`
+      )
+
+      const videoURL = `${process.env.S3_ENDPOINT_URL}/${process.env.S3_UPLOAD_BUCKET}/${videoId}.mp4`
+
+      const lastFrameResponse = await axios.post(
+        'https://express-video-ai-production.up.railway.app/api/processVideo',
+        {
+          videoUrl: cleanFullUrl,
+        }
+      )
+
+      const lastFrameImageUrl = lastFrameResponse.data.lastFrameImageUrl
+
       await prisma.video.update({
         where: {runpodId: runpodId},
         data: {
           videoId: videoId,
           videoURL: String(cleanFullUrl), // Save the clean video URL
+          lastFrameImage: String(lastFrameImageUrl), // Save the clean video URL
         },
       })
 
-      console.log('Video ID and URL saved:', videoId, fullUrl)
+      res.status(200).json({
+        message: 'Video creation process completed',
+        data: {
+          runpodId: statusResponse.data.id,
+          status: statusResponse.data.status,
+          videoId: String(videoId),
+          videoURL: videoURL,
+          lastFrameImage: lastFrameImageUrl,
+        },
+      })
     }
-
-    console.log(
-      'videoURL:',
-      `${process.env.S3_ENDPOINT_URL}/${process.env.S3_UPLOAD_BUCKET}/${videoId}.mp4`
-    )
-
-    const videoURL = `${process.env.S3_ENDPOINT_URL}/${process.env.S3_UPLOAD_BUCKET}/${videoId}.mp4`
-
-    res.status(200).json({
-      message: 'Video creation process completed',
-      data: {
-        runpodId: statusResponse.data.id,
-        status: statusResponse.data.status,
-        videoId: String(videoId),
-        videoURL: videoURL,
-      },
-    })
   } catch (error) {
     console.error(error)
     res.status(500).json({message: 'Something went wrong'})

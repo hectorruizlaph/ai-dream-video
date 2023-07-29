@@ -35,22 +35,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // console.log("uploadUrl", uploadUrl)
     const cleanUrl = (uploadUrl as string).split('?')[0]
 
-    // console.log("cleanUrl: ", cleanUrl)
-    // const {url, fields} = await createPresignedPost(client, {
-    //   Bucket: process.env.S3_UPLOAD_BUCKET!,
-    //   Key: fileKey,
-    //   Conditions: [["starts-with", "$Content-Type", contentType?.toString()!]],
-    //   Fields: {
-    //     acl: "public-read",
-    //     "Content-Type": contentType?.toString()!,
-    //   },
-    //   Expires: 600,
-    // })
-
-    // const imageUrl = `https://${process.env.S3_UPLOAD_BUCKET}.s3.${process.env.S3_UPLOAD_REGION}.amazonaws.com/${Key}`
-
-    // console.log("cleanUrl: ", cleanUrl)
-
     return res.json({cleanUrl})
   } catch (error) {
     console.log('Error:', error)
