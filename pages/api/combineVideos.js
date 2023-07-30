@@ -6,15 +6,15 @@ export default async function handler(req, res) {
     return res.status(405).json({message: 'Method not allowed'})
   }
 
-  const video1Url = req.body.video1Url
-  const video2Url = req.body.video2Url
+  const videoUrl1 = req.body.videoUrl1
+  const videoUrl2 = req.body.videoUrl2
 
   try {
     const response = await axios.post(
       'https://express-video-ai-production.up.railway.app/api/combineVideos',
       {
-        video1Url: video1Url,
-        video2Url: video2Url,
+        videoUrl1: videoUrl1,
+        videoUrl2: videoUrl2,
       }
     )
 
