@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     return res.status(405).json({message: 'Method not allowed'})
   }
 
-  console.log('||||||||||| api/video.js api :', req)
+  // console.log('||||||||||| api/video.js api :', req)
 
   const animationPrompts = req.body.animationPrompts
   const initImage = req.body.initImage
@@ -32,7 +32,6 @@ export default async function handler(req, res) {
           fps: 15,
           use_init: true,
           init_image: String(initImage),
-          // || "https://replicate.delivery/pbxt/XgwJVVHDIDJKKddxTa8teF5Qcgfwj4Ba7EUsqaQRNN1g5qFRA/out-0.png"
           animation_mode: '3D',
           zoom: '0:(1.00)',
           translation_x: '0:(0)',
@@ -129,6 +128,7 @@ export default async function handler(req, res) {
 
       const lastFrameImageUrl = lastFrameResponse.data.lastFrameImageUrl
 
+      console.log('lastFrameImageUrl :', lastFrameImageUrl)
       await prisma.video.update({
         where: {runpodId: runpodId},
         data: {
