@@ -18,3 +18,9 @@ model Video {
   lastFrameImage String?  @unique
   createdAt      DateTime @default(now())
 }
+
+model MainVideo {
+  id               Int      @id @default(autoincrement())
+  combinedVideoUrl String?  @unique
+  createdAt        DateTime @default(now())
+}

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import prisma from '../../utils/prisma' // ensure the path is correct
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -17,7 +18,13 @@ export default async function handler(req, res) {
       }
     )
 
-    res.status(200).json(response.data)
+    const newMainVideo = await prisma.mainVideo.create({
+      data: {
+        combinedVideoUrl: response.data.combinedVideoUrl,
+      },
+    })
+
+    res.status(200).json(newMainVideo)
   } catch (error) {
     console.error(error)
     res.status(500).json({message: 'Something went wrong'})
