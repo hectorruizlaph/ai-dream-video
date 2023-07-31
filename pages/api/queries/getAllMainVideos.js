@@ -1,4 +1,4 @@
-import {fetchAllMainVideos} from '../../queries/mainVideos'
+import {fetchAllMainVideos} from '../../../queries/mainVideos'
 
 export default async function handler(req, res) {
   try {

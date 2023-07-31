@@ -1,4 +1,3 @@
-import axios from 'axios'
 import {fetchAllVideos} from '../../../queries/videos'
 
 export default async function handler(req, res) {
