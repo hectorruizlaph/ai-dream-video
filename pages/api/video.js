@@ -10,6 +10,7 @@ export default async function handler(req, res) {
 
   const animationPrompts = req.body.animationPrompts
   const initImage = req.body.initImage
+  const isMainVideo = req?.body?.isMainVideo || false
 
   console.log('animationPrompts :', animationPrompts, 'initImage :', initImage)
 
@@ -77,11 +78,19 @@ export default async function handler(req, res) {
     console.log('response?.data?.id:', response?.data?.id)
     const runpodId = response.data.id
 
-    await prisma.video.create({
-      data: {
-        runpodId: runpodId,
-      },
-    })
+    if (isMainVideo) {
+      await prisma.mainVideo.create({
+        data: {
+          runpodId: runpodId,
+        },
+      })
+    } else {
+      await prisma.video.create({
+        data: {
+          runpodId: runpodId,
+        },
+      })
+    }
 
     let statusResponse = null
     do {
@@ -129,14 +138,26 @@ export default async function handler(req, res) {
       const lastFrameImageUrl = lastFrameResponse.data.lastFrameImageUrl
 
       console.log('lastFrameImageUrl :', lastFrameImageUrl)
-      await prisma.video.update({
-        where: {runpodId: runpodId},
-        data: {
-          videoId: videoId,
-          videoURL: String(cleanFullUrl), // Save the clean video URL
-          lastFrameImage: String(lastFrameImageUrl), // Save the clean video URL
-        },
-      })
+
+      if (isMainVideo) {
+        await prisma.mainVideo.update({
+          where: {runpodId: runpodId},
+          data: {
+            mainVideoId: videoId,
+            videoURL: String(cleanFullUrl), // Save the clean video URL
+            lastFrameImage: String(lastFrameImageUrl), // Save the clean video URL
+          },
+        })
+      } else {
+        await prisma.video.update({
+          where: {runpodId: runpodId},
+          data: {
+            videoId: videoId,
+            videoURL: String(cleanFullUrl), // Save the clean video URL
+            lastFrameImage: String(lastFrameImageUrl), // Save the clean video URL
+          },
+        })
+      }
 
       res.status(200).json({
         message: 'Video creation process completed',
