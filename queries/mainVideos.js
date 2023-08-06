@@ -11,3 +11,11 @@ export const fetchMainVideo = async (id) => {
     },
   })
 }
+
+export const deleteMainVideo = async (id) => {
+  return await prisma.mainVideo.delete({
+    where: {
+      id: id,
+    },
+  })
+}
