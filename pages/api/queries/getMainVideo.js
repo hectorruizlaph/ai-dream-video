@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const video = await fetchVideo(videoId)
+    const video = await fetchMainVideo(videoId)
 
     res.status(200).json({
       data: {
