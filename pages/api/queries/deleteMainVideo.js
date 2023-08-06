@@ -1,10 +1,10 @@
 import {deleteMainVideo} from '../../../queries/videos'
 
 export default async function handler(req, res) {
-  const videoId = res?.body?.videoId
+  const videoId = req?.body?.videoId
 
   if (!videoId) {
-    res.json({message: 'provide a video id'})
+    res.json({message: 'provide a videoId'})
   }
 
   try {
