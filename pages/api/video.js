@@ -1,7 +1,10 @@
 import axios from 'axios'
 import prisma from '../../utils/prisma'
+import {NextResponse} from 'next/server'
 
 export default async function handler(req, res) {
+  const origin = req.headers.get('origin')
+  console.log('origin: ', origin)
   if (req.method !== 'POST') {
     return res.status(405).json({message: 'Method not allowed'})
   }
@@ -167,6 +170,12 @@ export default async function handler(req, res) {
           videoId: String(videoId),
           videoURL: videoURL,
           lastFrameImage: lastFrameImageUrl,
+        },
+      })
+      return new NextResponse(JSON.stringify(res), {
+        headers: {
+          'Access-Control-Allow-Origin': origin || '*',
+          'Content-Type': 'application/json',
         },
       })
     }
