@@ -23,6 +23,8 @@ async function uploadImageToS3(file, fileName, mimeType) {
   return fileName
 }
 export default async function handler(request, response) {
+  const origin = request.headers.get('origin')
+
   try {
     const formData = await request.formData()
     const file = formData.get('file')
@@ -41,7 +43,11 @@ export default async function handler(request, response) {
       randomUUID() + '.' + fileExtension,
       mimeType
     )
-    return new Response(JSON.stringify({success: true, fileName}))
+    return new Response(JSON.stringify({success: true, fileName}), {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
+    })
   } catch (error) {
     console.error('Error uploading image:', error)
     return new Response(

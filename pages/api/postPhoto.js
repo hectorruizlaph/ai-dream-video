@@ -1,4 +1,3 @@
-import {NextApiRequest, NextApiResponse} from 'next'
 import {getErrorMessage} from '../../utils/getErrorMessage'
 import S3 from 'aws-sdk/clients/s3'
 import {randomUUID} from 'crypto'
@@ -11,7 +10,9 @@ const s3 = new S3({
   signatureVersion: 'v4',
 })
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req, res) => {
+  const origin = req.headers.get('origin')
+
   const {query} = req
   const {filename, contentType} = query
 
@@ -21,7 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     // const client = new S3Client({region: process.env.S3_UPLOAD_REGION})
 
-    const ex = (contentType as string).split('/')[1]
+    const ex = contentType.split('/')[1]
     const Key = `images/${randomUUID()}.${ex}`
 
     const s3Params = {
@@ -33,11 +34,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const uploadUrl = await s3.getSignedUrl('putObject', s3Params)
     // console.log("uploadUrl", uploadUrl)
-    const cleanUrl = (uploadUrl as string).split('?')[0]
+    const cleanUrl = uploadUrl.split('?')[0]
+    res.setHeader('Access-Control-Allow-Origin', '*')
 
     return res.json({cleanUrl})
   } catch (error) {
     console.log('Error:', error)
+    res.setHeader('Access-Control-Allow-Origin', '*')
+
     return res.json({error: getErrorMessage(error)})
   }
 }

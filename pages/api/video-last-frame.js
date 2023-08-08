@@ -6,6 +6,8 @@ import randomUUID from 'crypto'
 import fs from 'fs'
 
 export default async function handler(req, res) {
+  const origin = req.headers.get('origin')
+
   if (req.method !== 'POST') {
     return res.status(405).json({message: 'Method not allowed'})
   }
@@ -42,6 +44,7 @@ export default async function handler(req, res) {
 
         // Delete temp file
         fs.unlinkSync(outputPath)
+        res.setHeader('Access-Control-Allow-Origin', '*')
 
         res.status(200).json({
           message: 'Frame extraction and upload successful',
@@ -59,6 +62,8 @@ export default async function handler(req, res) {
       })
   } catch (error) {
     console.error(error)
+    res.setHeader('Access-Control-Allow-Origin', '*')
+
     res.status(500).json({message: 'Something went wrong'})
   }
 }

@@ -4,6 +4,8 @@ import {fetchMainVideo} from '../../queries/mainVideos'
 import {fetchVideo} from '../../queries/videos'
 
 export default async function handler(req, res) {
+  const origin = req.headers.get('origin')
+
   // id, videoUrl, lastFrameVideo
   if (req.method !== 'POST') {
     return res.status(405).json({message: 'Method not allowed'})
@@ -52,10 +54,13 @@ export default async function handler(req, res) {
         lastFrameImage: lastFrameImage,
       },
     })
+    res.setHeader('Access-Control-Allow-Origin', '*')
 
     res.status(200).json(newMainVideo)
   } catch (error) {
     console.error(error)
+    res.setHeader('Access-Control-Allow-Origin', '*')
+
     res.status(500).json({message: 'Something went wrong'})
   }
 }
