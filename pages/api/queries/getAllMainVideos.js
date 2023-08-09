@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     const allMainVideos = await fetchAllMainVideos()
     // res.setHeader('Access-Control-Allow-Origin', '*')
 
-    return res.status(200).json({
+    res.status(200).json({
       data: {
         allMainVideos,
       },
