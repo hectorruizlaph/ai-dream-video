@@ -1,6 +1,5 @@
 import axios from 'axios'
 import prisma from '../../utils/prisma'
-import {NextResponse} from 'next/server'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -168,12 +167,6 @@ export default async function handler(req, res) {
           videoId: String(videoId),
           videoURL: videoURL,
           lastFrameImage: lastFrameImageUrl,
-        },
-      })
-      return new NextResponse(JSON.stringify(res), {
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json',
         },
       })
     }
