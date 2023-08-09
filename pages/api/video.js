@@ -2,14 +2,10 @@ import axios from 'axios'
 import prisma from '../../utils/prisma'
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({message: 'Method not allowed'})
-  }
+  console.log('||||||||||| api/video.js api :', req)
 
-  // console.log('||||||||||| api/video.js api :', req)
-
-  const animationPrompts = req.body.animationPrompts
-  const initImage = req.body.initImage
+  const animationPrompts = req?.body?.animationPrompts
+  const initImage = req?.body?.initImage
   const isMainVideo = req?.body?.isMainVideo || false
 
   console.log('animationPrompts :', animationPrompts, 'initImage :', initImage)
