@@ -8,7 +8,7 @@ const allowedOrigens = [
 ]
 
 export function middleware(req) {
-  const origin = req.headers.get('origin')
+  const origin = req?.nextUrl?.origin
   console.log('origin: ', origin)
 
   const res = new NextResponse(null, {

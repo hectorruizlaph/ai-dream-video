@@ -1,7 +1,11 @@
 import {fetchAllMainVideos} from '../../../queries/mainVideos'
 
 export default async function handler(req, res) {
+  console.log('|||||||||||||||||||||||||||')
   const origin = req.headers.get('origin')
+  const origin2 = req.headers['origin']
+  console.log('origin :', origin)
+  console.log('origin2 :', origin2)
 
   try {
     const allMainVideos = await fetchAllMainVideos()

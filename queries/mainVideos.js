@@ -1,6 +1,7 @@
 import prisma from '../utils/prisma'
 
 export const fetchAllMainVideos = async () => {
+  console.log('fetchAllVideos')
   return await prisma.mainVideo.findMany()
 }
 
