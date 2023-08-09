@@ -1,8 +1,6 @@
 import {fetchMainVideo} from '../../../queries/videos'
 
 export default async function handler(req, res) {
-  const origin = req.headers.get('origin')
-
   const videoId = req?.body?.videoId
 
   if (!videoId) {
@@ -20,7 +18,7 @@ export default async function handler(req, res) {
     })
   } catch (error) {
     console.error(error)
-  res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Origin', '*')
 
     res.status(500).json({message: 'Something went wrong'})
   }

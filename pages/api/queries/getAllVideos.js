@@ -1,8 +1,6 @@
 import {fetchAllVideos} from '../../../queries/videos'
 
 export default async function handler(req, res) {
-  const origin = req.headers.get('origin')
-
   try {
     const allVideos = await fetchAllVideos()
     res.setHeader('Access-Control-Allow-Origin', '*')

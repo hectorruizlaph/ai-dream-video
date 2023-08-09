@@ -4,8 +4,6 @@ import {fetchMainVideo} from '../../queries/mainVideos'
 import {fetchVideo} from '../../queries/videos'
 
 export default async function handler(req, res) {
-  const origin = req.headers.get('origin')
-
   // id, videoUrl, lastFrameVideo
   if (req.method !== 'POST') {
     return res.status(405).json({message: 'Method not allowed'})

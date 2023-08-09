@@ -11,8 +11,6 @@ const s3 = new S3({
 })
 
 const handler = async (req, res) => {
-  const origin = req.headers.get('origin')
-
   const {query} = req
   const {filename, contentType} = query
 

@@ -2,8 +2,6 @@ import {fetchVideo} from '../../../queries/videos'
 import {NextResponse} from 'next/server'
 
 export default async function handler(req, res) {
-  const origin = req.headers.get('origin')
-  const origin2 = req.headers['origin']
 
   const videoId = req?.body?.videoId
 
@@ -23,7 +21,7 @@ export default async function handler(req, res) {
 
     return new NextResponse(JSON.stringify(data), {
       headers: {
-        'Access-Control-Allow-Origin': origin || origin2 || '*',
+        'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json',
       },
     })

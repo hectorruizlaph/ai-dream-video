@@ -23,8 +23,6 @@ async function uploadImageToS3(file, fileName, mimeType) {
   return fileName
 }
 export default async function handler(request, response) {
-  const origin = request.headers.get('origin')
-
   try {
     const formData = await request.formData()
     const file = formData.get('file')

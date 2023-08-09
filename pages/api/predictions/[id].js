@@ -5,8 +5,6 @@ import Replicate from 'replicate'
 // })
 
 export default async function handler(req, res) {
-  const origin = req.headers.get('origin')
-
   console.log('api/predictions/[id].js req:', req?.body)
 
   const replicateKey = req.body.replicateKey || process.env.REPLICATE_API_TOKEN
